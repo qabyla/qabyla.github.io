@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Admin — администратор клиники в WhatsApp</title>
-<meta name="description" content="AI Admin отвечает пациентам клиники в WhatsApp на казахском и русском, предлагает свободные окна и передаёт заявку администратору в Telegram.">
+<meta name="description" content="AI Admin сам записывает пациентов клиники в WhatsApp на казахском и русском: свободное время из расписания, перенос, отмена и напоминания о приёме.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@500;700&display=swap&subset=cyrillic-ext" rel="stylesheet">
@@ -93,8 +93,8 @@ a{color:inherit}
 .admin dt{color:var(--ink-soft)}.admin dd{margin:0;font-weight:500}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
 .acts button{font:600 12.5px var(--text);border:0;border-radius:9px;padding:9px 6px;background:var(--enamel);color:var(--ink);cursor:default}
-.acts button.ok{grid-column:1/-1;background:var(--teal);color:#fff;transition:background .3s}
-.acts button.ok.done{background:var(--slot);color:var(--ink)}
+.acts button{color:var(--ink-soft)}
+.booked{margin:12px 0 0;padding:9px 10px;border-radius:9px;background:var(--slot);font-weight:600;font-size:13px}
 @media (max-width:920px){.admin{right:-8px;bottom:-56px}}
 @media (max-width:480px){.screen{height:500px}.admin{position:relative;right:auto;bottom:auto;width:auto;margin:-28px 12px 0}}
 
@@ -182,7 +182,7 @@ footer{padding:48px 0 40px;font-size:14px;color:var(--ink-soft);display:flex;fle
   <div class="hero">
     <div>
       <h1>Пациент пишет ночью. <span>Утром у вас готовая запись.</span></h1>
-      <p class="lead">AI Admin отвечает пациентам клиники в WhatsApp на казахском и русском, предлагает только свободное время из расписания и присылает заявку администратору в Telegram. Подтвердить можно одной кнопкой.</p>
+      <p class="lead">AI Admin сам ведёт запись в WhatsApp клиники на казахском и русском: предлагает свободное время из расписания, записывает, переносит, отменяет и напоминает о приёме. Администратор просто видит новые записи в Telegram.</p>
       <div class="hero-ctas">
         <a class="btn btn-primary" href="#contact">Записаться на демо</a>
         <a class="btn btn-ghost" href="#how">Как это работает</a>
@@ -208,17 +208,17 @@ footer{padding:48px 0 40px;font-size:14px;color:var(--ink-soft);display:flex;fle
         </div>
       </div>
       <div class="admin" id="admin" aria-hidden="true">
-        <header><span class="tg"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M21.5 4.2 2.9 11.4c-1.3.5-1.3 1.2-.2 1.6l4.8 1.5 1.8 5.6c.2.6.1.9.8.9.5 0 .7-.2 1-.5l2.3-2.3 4.9 3.6c.9.5 1.5.2 1.8-.8l3.2-15.2c.3-1.3-.5-1.9-1.8-1.4Z"/></svg></span>Заявка №128<small>23:48</small></header>
+        <header><span class="tg"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M21.5 4.2 2.9 11.4c-1.3.5-1.3 1.2-.2 1.6l4.8 1.5 1.8 5.6c.2.6.1.9.8.9.5 0 .7-.2 1-.5l2.3-2.3 4.9 3.6c.9.5 1.5.2 1.8-.8l3.2-15.2c.3-1.3-.5-1.9-1.8-1.4Z"/></svg></span>Новая запись №128<small>23:48</small></header>
         <span class="urgent">Срочно: острая боль</span>
         <dl>
           <dt>Пациент</dt><dd id="a-name">Айдана</dd>
           <dt>Врач</dt><dd>Терапевт</dd>
-          <dt>Когда</dt><dd>Завтра, 09:00</dd>
+          <dt>Когда</dt><dd>Завтра, 11:30</dd>
         </dl>
+        <p class="booked" id="booked">✓ Бот уже записал пациента</p>
         <div class="acts">
-          <button type="button" class="ok" id="okbtn" tabindex="-1">Подтвердить</button>
-          <button type="button" tabindex="-1">Другое время</button>
-          <button type="button" tabindex="-1">Перезвонить</button>
+          <button type="button" tabindex="-1">Отменить</button>
+          <button type="button" tabindex="-1">Перезвоню сам</button>
         </div>
       </div>
     </div>
@@ -229,8 +229,8 @@ footer{padding:48px 0 40px;font-size:14px;color:var(--ink-soft);display:flex;fle
 <section class="night" id="how">
   <div class="wrap">
     <div class="sec-head">
-      <h2>Одна запись от сообщения до подтверждения</h2>
-      <p>Администратор не сидит в WhatsApp до полуночи. Бот ведёт разговор, а решение остаётся за человеком.</p>
+      <h2>От сообщения до приёма без администратора</h2>
+      <p>Никто не сидит в WhatsApp до полуночи. Бот ведёт запись сам, а сотрудники видят, кто и когда придёт.</p>
     </div>
     <ol class="timeline">
       <li>
@@ -240,13 +240,13 @@ footer{padding:48px 0 40px;font-size:14px;color:var(--ink-soft);display:flex;fle
       </li>
       <li>
         <time>23:48</time>
-        <h3>AI Admin подбирает время</h3>
-        <p>Смотрит расписание врачей, предлагает свободные окна, спрашивает имя и отмечает срочные случаи.</p>
+        <h3>AI Admin записывает</h3>
+        <p>Предлагает свободное время из расписания, спрашивает имя и сразу записывает. Клиника получает уведомление в Telegram.</p>
       </li>
       <li>
-        <time>09:02</time>
-        <h3>Администратор нажимает «Подтвердить»</h3>
-        <p>Заявка ждёт в Telegram. После нажатия пациенту сразу приходит подтверждение с адресом.</p>
+        <time>09:30</time>
+        <h3>Бот напоминает о приёме</h3>
+        <p>За сутки или за пару часов до визита. Если планы изменились, бот сам перенесёт или отменит запись.</p>
       </li>
     </ol>
   </div>
@@ -261,8 +261,9 @@ footer{padding:48px 0 40px;font-size:14px;color:var(--ink-soft);display:flex;fle
     <div class="rows">
       <div class="row"><h3>Казахский и русский</h3><p>Пишет грамотно на обоих языках и отвечает на том, на котором обратился пациент.</p></div>
       <div class="row"><h3>Только свободное время</h3><p>Не придумывает окна. Берёт их из расписания клиники и учитывает, какой врач нужен для услуги.</p></div>
-      <div class="row"><h3>Срочные случаи</h3><p>Боль, отёк, кровотечение — заявка помечается «Срочно». Если описанное похоже на угрозу жизни, бот советует звонить 103.</p></div>
-      <div class="row"><h3>Решает администратор</h3><p>Бот не подтверждает запись сам. Ваш сотрудник видит заявку в Telegram и выбирает: подтвердить, предложить другое время или перезвонить.</p></div>
+      <div class="row"><h3>Перенос и отмена</h3><p>Пациент пишет «не смогу прийти» — бот сам предлагает другое время или отменяет запись, и окно освобождается для других.</p></div>
+      <div class="row"><h3>Напоминания</h3><p>За сутки или за 2 часа до приёма. Меньше неявок, и никого не нужно обзванивать.</p></div>
+      <div class="row"><h3>Срочные случаи</h3><p>Боль, отёк, кровотечение — бот ищет ближайшее время и помечает запись «Срочно». Если описанное похоже на угрозу жизни, советует звонить 103 и зовёт сотрудника.</p></div>
       <div class="row"><h3>Ответы на вопросы</h3><p>Цены, услуги, адрес, график работы — из данных вашей клиники. Сложный вопрос бот передаёт человеку.</p></div>
       <div class="row"><h3>Официальный WhatsApp</h3><p>Подключение через WhatsApp Business Platform от Meta, без серых сервисов, из-за которых блокируют номера.</p></div>
     </div>
@@ -281,7 +282,8 @@ footer{padding:48px 0 40px;font-size:14px;color:var(--ink-soft);display:flex;fle
       <ul>
         <li>14 дней бесплатно на вашем WhatsApp</li>
         <li>Настройка под ваших врачей, услуги и прайс</li>
-        <li>Заявки и кнопки подтверждения в Telegram</li>
+        <li>Уведомления о записях в Telegram</li>
+        <li>Напоминания пациентам о приёме</li>
         <li>Правки текстов и расписания по запросу</li>
       </ul>
       <a class="btn btn-primary" href="#contact">Записаться на демо</a>
@@ -295,8 +297,8 @@ footer{padding:48px 0 40px;font-size:14px;color:var(--ink-soft);display:flex;fle
     <div class="sec-head"><h2>Частые вопросы</h2></div>
     <div class="faq">
       <details><summary>Нужно ли менять номер клиники?</summary><p>Нет. Подключаем ваш номер к официальному WhatsApp Business Platform. Если номер сейчас в приложении WhatsApp Business, перед подключением расскажем, что изменится.</p></details>
-      <details><summary>Что если бот не понял пациента?</summary><p>Он не гадает: передаёт разговор администратору с пометкой, что нужен человек, и пишет пациенту, что с ним свяжутся.</p></details>
-      <details><summary>Бот может записать не туда?</summary><p>Запись подтверждает только ваш администратор. Бот создаёт заявку на свободное окно, а финальное решение за сотрудником.</p></details>
+      <details><summary>Нужен ли администратор вообще?</summary><p>Для записи, переноса, отмены и вопросов о ценах и адресе — нет. Сотрудника бот зовёт только при жалобе, опасном состоянии или вопросе, ответа на который нет в данных клиники.</p></details>
+      <details><summary>Не будет накладок с записью по телефону?</summary><p>При подключении настраиваем общее расписание с вашей программой записи или таблицей, чтобы бот видел те же занятые часы, что и сотрудники. Каждую новую запись клиника сразу видит в Telegram и может отменить её одной кнопкой.</p></details>
       <details><summary>Где хранятся данные пациентов?</summary><p>Для работающих клиник данные размещаются на сервере в Казахстане. Подробности в <a href="privacy.html">политике конфиденциальности</a>.</p></details>
       <details><summary>Сколько времени занимает подключение?</summary><p>Настройка под вашу клинику занимает несколько дней: собираем врачей, услуги и расписание, подключаем WhatsApp и Telegram администратора.</p></details>
     </div>
@@ -308,7 +310,7 @@ footer{padding:48px 0 40px;font-size:14px;color:var(--ink-soft);display:flex;fle
     <div class="contact">
       <div>
         <h2>Посмотрите на бота вашей клиники</h2>
-        <p>Покажем демо за 15 минут: напишете боту как пациент на казахском или русском и увидите заявку глазами администратора.</p>
+        <p>Покажем демо за 15 минут: напишете боту как пациент на казахском или русском и увидите, как запись появляется у клиники.</p>
       </div>
       <div class="btns">
         <a class="btn btn-primary" id="c-wa" href="#" data-contact="wa">Написать в WhatsApp</a>
@@ -340,32 +342,32 @@ const SCRIPTS = {
     status: "онлайн", name: "Айдана",
     msgs: [
       ["in", "Сәлеметсіз бе! Тісім түні бойы ауырды. Ертеңге жазыла аламын ба?", "23:47"],
-      ["out", "Сәлеметсіз бе! Ертең терапевтте бос уақыт бар. Қайсысы ыңғайлы?", "23:47", ["09:00", "11:30", "15:00"]],
-      ["in", "09:00 болсын", "23:47"],
+      ["out", "Сәлеметсіз бе! Мен Dental Smile клиникасының виртуалды көмекшісімін. Ертең терапевтте бос уақыт бар. Қайсысы ыңғайлы?", "23:47", ["11:30", "14:00", "16:30"]],
+      ["in", "11:30 болсын", "23:47"],
       ["out", "Жақсы. Атыңызды жазыңызшы.", "23:48"],
       ["in", "Айдана", "23:48"],
-      ["out", "Рақмет, Айдана! Өтінішіңізді әкімшіге жібердім. Растағаннан кейін осында жазамын.", "23:48"],
-      ["confirm"],
-      ["out", "✅ Жазылдыңыз: ертең, 09:00, терапевт. Сізді күтеміз!", "09:02"],
+      ["out", "✅ Айдана, сіз жазылдыңыз: ертең, 11:30, терапевт. Жоспар өзгерсе, осында жазыңыз.", "23:48"],
+      ["card"],
+      ["out", "🔔 Еске салу: бүгін 11:30-да сізді терапевт күтеді. Келе алмасаңыз, жазыңыз — ауыстырып беремін.", "09:30"],
     ],
   },
   ru: {
     status: "онлайн", name: "Айдана",
     msgs: [
       ["in", "Здравствуйте! Всю ночь болит зуб. Можно записаться на завтра?", "23:47"],
-      ["out", "Здравствуйте! Завтра у терапевта есть свободное время. Как вам удобнее?", "23:47", ["09:00", "11:30", "15:00"]],
-      ["in", "Давайте в 09:00", "23:47"],
+      ["out", "Здравствуйте! Я виртуальный помощник клиники Dental Smile. Завтра у терапевта есть свободное время. Как вам удобнее?", "23:47", ["11:30", "14:00", "16:30"]],
+      ["in", "Давайте в 11:30", "23:47"],
       ["out", "Хорошо. Напишите, пожалуйста, ваше имя.", "23:48"],
       ["in", "Айдана", "23:48"],
-      ["out", "Спасибо, Айдана! Передала заявку администратору. Как только подтвердит, напишу сюда.", "23:48"],
-      ["confirm"],
-      ["out", "✅ Вы записаны: завтра, 09:00, терапевт. Ждём вас!", "09:02"],
+      ["out", "✅ Айдана, вы записаны: завтра, 11:30, терапевт. Если планы изменятся — напишите сюда.", "23:48"],
+      ["card"],
+      ["out", "🔔 Напоминаем: сегодня в 11:30 вас ждёт терапевт. Не получается прийти? Напишите — перенесу.", "09:30"],
     ],
   },
 };
 
 const chat = document.getElementById("chat"), typing = document.getElementById("typing");
-const admin = document.getElementById("admin"), okbtn = document.getElementById("okbtn");
+const admin = document.getElementById("admin");
 const clock = document.getElementById("clock");
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let run = 0;
@@ -377,7 +379,7 @@ function bubble([side, text, time, slots]) {
   m.textContent = text;
   if (slots) {
     const s = document.createElement("div"); s.className = "slots";
-    slots.forEach((t, i) => { const b = document.createElement("span"); b.textContent = t; if (i === 0) b.dataset.first = "1"; s.append(b); });
+    slots.forEach(t => { const b = document.createElement("span"); b.textContent = t; s.append(b); });
     m.append(s);
   }
   const t = document.createElement("time"); t.textContent = time; m.append(t);
@@ -390,23 +392,23 @@ function bubble([side, text, time, slots]) {
 async function play(lang) {
   const id = ++run, sc = SCRIPTS[lang];
   chat.querySelectorAll(".msg").forEach(n => n.remove());
-  admin.classList.remove("on"); okbtn.classList.remove("done"); chat.classList.remove("lift");
-  okbtn.textContent = "Подтвердить";
+  admin.classList.remove("on"); chat.classList.remove("lift");
   clock.textContent = "23:47";
   try {
     await wait(500, id);
     let slotMsg;
     for (const step of sc.msgs) {
-      if (step[0] === "confirm") {
-        chat.classList.add("lift"); admin.classList.add("on"); await wait(1800, id);
-        okbtn.classList.add("done"); okbtn.textContent = "✓ Подтверждено"; clock.textContent = "09:02";
-        await wait(900, id); continue;
+      if (step[0] === "card") {  // клиника видит новую запись — нажимать ничего не нужно
+        chat.classList.add("lift"); admin.classList.add("on"); await wait(2600, id);
+        continue;
       }
+      if (step[2] === "09:30") { admin.classList.remove("on"); chat.classList.remove("lift"); await wait(700, id); }  // утро
       if (step[0] === "out") { typing.classList.add("on"); await wait(1100, id); typing.classList.remove("on"); }
       else await wait(900, id);
       const m = bubble(step);
       if (step[3]) slotMsg = m;
-      if (step[0] === "in" && slotMsg && /09:00/.test(step[1])) slotMsg.querySelector("[data-first]").classList.add("pick");
+      if (step[0] === "in" && slotMsg) slotMsg.querySelectorAll(".slots span")
+        .forEach(s => { if (step[1].includes(s.textContent)) s.classList.add("pick"); });
       clock.textContent = step[2];
       await wait(step[0] === "in" ? 600 : 900, id);
     }
