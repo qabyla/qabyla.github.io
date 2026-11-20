@@ -3,425 +3,139 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Admin — администратор клиники в WhatsApp</title>
-<meta name="description" content="AI Admin сам записывает пациентов клиники в WhatsApp на казахском и русском: свободное время из расписания, перенос, отмена и напоминания о приёме.">
+<title>Qabyla: ИИ-администратор для салонов и клиник</title>
+<meta name="description" content="Отвечает клиентам в WhatsApp и Telegram на русском и казахском, записывает, переносит и напоминает о визитах. 14 дней бесплатно.">
+<meta property="og:title" content="Qabyla: ИИ-администратор для салонов и клиник">
+<meta property="og:description" content="Отвечает клиентам в WhatsApp и Telegram на русском и казахском, записывает, переносит и напоминает о визитах. 14 дней бесплатно.">
+<link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><rect width='32' height='32' rx='8' fill='%231F3AB0'/><rect x='8' y='9' width='16' height='2.4' rx='1.2' fill='%23fff'/><rect x='8' y='14.8' width='16' height='2.4' rx='1.2' fill='%23FFE45C'/><rect x='8' y='20.6' width='10' height='2.4' rx='1.2' fill='%23fff'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@500;700&display=swap&subset=cyrillic-ext" rel="stylesheet">
-<style>
-:root{
-  --enamel:#F3F6F4; --paper:#FFFFFF; --ink:#0F2A33; --ink-soft:#4A6169;
-  --teal:#0B6B66; --teal-deep:#084A47; --slot:#F4C542; --line:#D3DEDA;
-  --night:#10262F; --night-2:#18343F; --night-text:#E4EEEC;
-  --display:"Unbounded", system-ui, sans-serif;
-  --text:"Golos Text", system-ui, sans-serif;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--enamel);color:var(--ink);font:400 17px/1.6 var(--text);-webkit-font-smoothing:antialiased}
-a{color:inherit}
-:focus-visible{outline:3px solid var(--slot);outline-offset:3px;border-radius:4px}
-.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
-@media (max-width:600px){.wrap{padding:0 16px}}
-
-/* header */
-.top{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
-.logo{display:flex;align-items:center;gap:10px;font:700 18px/1 var(--display);text-decoration:none;letter-spacing:-.01em}
-.logo-mark{width:30px;height:30px;border-radius:9px;background:var(--teal);display:grid;place-items:center}
-.logo-mark i{width:12px;height:12px;border-radius:3px;background:var(--slot);display:block}
-.top nav{display:flex;gap:28px;align-items:center;font-weight:500;font-size:15px}
-.top nav a:not(.btn){text-decoration:none;color:var(--ink-soft)}
-.top nav a:not(.btn):hover{color:var(--ink)}
-@media (max-width:760px){.top nav a.hide-m{display:none}}
-
-.btn{display:inline-flex;align-items:center;gap:10px;font:600 16px/1 var(--text);text-decoration:none;
-  padding:16px 24px;border-radius:999px;border:0;cursor:pointer;transition:background .2s,transform .2s}
-.btn-primary{background:var(--teal);color:#fff}
-.btn-primary:hover{background:var(--teal-deep)}
-.btn-ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
-.btn-ghost:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
-.btn-sm{padding:11px 18px;font-size:14px}
-
-/* hero */
-.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:48px 0 96px}
-.hero h1{font:700 clamp(36px,5.2vw,64px)/1.04 var(--display);letter-spacing:-.035em;margin:0 0 28px}
-.hero h1 span{display:block;color:var(--ink-soft)}
-.lead{font-size:clamp(17px,1.6vw,20px);line-height:1.55;color:var(--ink-soft);max-width:34em;margin:0 0 36px}
-.hero-ctas{display:flex;flex-wrap:wrap;gap:12px}
-.hero-note{margin-top:22px;font-size:14px;color:var(--ink-soft)}
-@media (max-width:920px){.hero{grid-template-columns:1fr;gap:48px;padding:24px 0 72px}}
-
-/* stage: phone + admin card */
-.stage{position:relative;justify-self:center;width:100%;max-width:440px}
-.lang{display:flex;gap:4px;background:var(--paper);border-radius:999px;padding:4px;width:max-content;margin:0 auto 18px;box-shadow:inset 0 0 0 1px var(--line)}
-.lang button{font:600 13px/1 var(--text);border:0;background:transparent;color:var(--ink-soft);padding:9px 14px;border-radius:999px;cursor:pointer}
-.lang button[aria-pressed="true"]{background:var(--ink);color:#fff}
-.phone{background:var(--night);border-radius:38px;padding:14px;box-shadow:0 30px 60px -30px rgba(15,42,51,.55)}
-.screen{background:linear-gradient(180deg,#0F2530,#132E39);border-radius:28px;overflow:hidden;height:540px;display:flex;flex-direction:column}
-.bar{display:flex;align-items:center;gap:12px;padding:16px 18px;background:rgba(255,255,255,.04);color:var(--night-text)}
-.ava{width:38px;height:38px;border-radius:50%;background:var(--teal);display:grid;place-items:center;font:700 13px var(--display);color:#fff;flex:none}
-.bar b{display:block;font-size:15px;font-weight:600}
-.bar small{font-size:12px;color:#8FB0AD}
-.clock{margin-left:auto;font:500 13px var(--text);color:#8FB0AD;font-variant-numeric:tabular-nums}
-.chat{flex:1;padding:18px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden;justify-content:flex-end;transition:padding .45s}
-.chat.lift{padding-bottom:200px}
-@media (max-width:480px){.chat.lift{padding-bottom:18px}}
-.msg{max-width:82%;padding:10px 13px 8px;border-radius:16px;font-size:14.5px;line-height:1.4;color:var(--night-text);
-  opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s}
-.msg.on{opacity:1;transform:none}
-.msg.in{align-self:flex-start;background:var(--night-2);border-bottom-left-radius:5px}
-.msg.out{align-self:flex-end;background:var(--teal);border-bottom-right-radius:5px}
-.msg time{display:block;text-align:right;font-size:11px;color:rgba(228,238,236,.55);margin-top:3px;font-variant-numeric:tabular-nums}
-.slots{display:flex;gap:6px;margin-top:8px}
-.slots span{font:600 13px var(--text);padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.12)}
-.slots span.pick{background:var(--slot);color:var(--ink)}
-.typing{align-self:flex-end;background:var(--teal);border-radius:16px;padding:12px 14px;display:none;gap:4px}
-.typing.on{display:flex}
-.typing i{width:6px;height:6px;border-radius:50%;background:#CDE6E3;animation:dot 1s infinite}
-.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
-@keyframes dot{0%,60%,100%{opacity:.3}30%{opacity:1}}
-
-.admin{position:absolute;right:-56px;bottom:-40px;width:270px;background:var(--paper);border-radius:18px;padding:16px;
-  box-shadow:0 24px 50px -20px rgba(15,42,51,.45),0 0 0 1px var(--line);font-size:13.5px;line-height:1.45;
-  opacity:0;transform:translateY(16px) scale(.97);transition:opacity .45s,transform .45s}
-.admin.on{opacity:1;transform:none}
-.admin header{display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:8px}
-.admin header .tg{width:22px;height:22px;border-radius:50%;background:#2AABEE;display:grid;place-items:center}
-.admin header small{margin-left:auto;font-weight:500;color:var(--ink-soft);font-variant-numeric:tabular-nums}
-.urgent{display:inline-block;background:#FDE3DF;color:#A3271A;font-weight:600;font-size:12px;padding:3px 8px;border-radius:6px;margin-bottom:6px}
-.admin dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
-.admin dt{color:var(--ink-soft)}.admin dd{margin:0;font-weight:500}
-.acts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
-.acts button{font:600 12.5px var(--text);border:0;border-radius:9px;padding:9px 6px;background:var(--enamel);color:var(--ink);cursor:default}
-.acts button{color:var(--ink-soft)}
-.booked{margin:12px 0 0;padding:9px 10px;border-radius:9px;background:var(--slot);font-weight:600;font-size:13px}
-@media (max-width:920px){.admin{right:-8px;bottom:-56px}}
-@media (max-width:480px){.screen{height:500px}.admin{position:relative;right:auto;bottom:auto;width:auto;margin:-28px 12px 0}}
-
-/* sections */
-section{padding:96px 0}
-.sec-head{max-width:640px;margin-bottom:56px}
-h2{font:700 clamp(28px,3.4vw,42px)/1.1 var(--display);letter-spacing:-.03em;margin:0 0 16px}
-.sec-head p{color:var(--ink-soft);margin:0;font-size:18px}
-
-/* timeline */
-.night{background:var(--ink);color:var(--night-text)}
-.night .sec-head p{color:#9DB7B4}
-.timeline{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid rgba(255,255,255,.14)}
-.timeline li{padding:28px 32px 0 0;position:relative}
-.timeline li::before{content:"";position:absolute;top:-6px;left:0;width:11px;height:11px;border-radius:50%;background:var(--ink);box-shadow:inset 0 0 0 2px #9DB7B4}
-.timeline li:last-child::before{background:var(--slot);box-shadow:none}
-.timeline time{display:block;font:700 44px/1 var(--display);letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-bottom:18px}
-.timeline li:nth-child(3) time{color:var(--slot)}
-.timeline h3{font-size:19px;font-weight:600;margin:0 0 8px;color:#fff}
-.timeline p{margin:0;color:#9DB7B4;max-width:24em}
-.timeline .gap{font-size:13px;color:#6F8D8A;margin-top:14px}
-@media (max-width:820px){.timeline{grid-template-columns:1fr;border-top:0;border-left:1px solid rgba(255,255,255,.14);margin-left:5px}
-  .timeline li{padding:0 0 44px 32px}.timeline li::before{top:10px;left:-6px}}
-
-/* abilities: schedule-like rows */
-.rows{border-top:1.5px solid var(--ink)}
-.row{display:grid;grid-template-columns:minmax(200px,320px) 1fr;gap:32px;padding:26px 0;border-bottom:1px solid var(--line);align-items:baseline}
-.row h3{font:500 20px/1.3 var(--display);letter-spacing:-.015em;margin:0}
-.row p{margin:0;color:var(--ink-soft);max-width:38em}
-@media (max-width:700px){.row{grid-template-columns:1fr;gap:8px}}
-
-/* price */
-.price{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
-.tag{background:var(--paper);border-radius:28px;padding:40px;box-shadow:0 0 0 1px var(--line)}
-.tag .sum{font:700 clamp(44px,6vw,72px)/1 var(--display);letter-spacing:-.04em;margin:8px 0 6px;font-variant-numeric:tabular-nums}
-.tag .per{color:var(--ink-soft);margin:0 0 28px}
-.tag ul{list-style:none;padding:0;margin:0 0 32px;display:grid;gap:12px}
-.tag li{display:grid;grid-template-columns:22px 1fr;gap:10px}
-.tag li::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--slot);margin-top:7px}
-.fine{font-size:14px;color:var(--ink-soft);margin-top:18px}
-@media (max-width:860px){.price{grid-template-columns:1fr;gap:32px}.tag{padding:28px}}
-
-/* faq */
-.faq{max-width:780px}
-details{border-bottom:1px solid var(--line)}
-summary{list-style:none;cursor:pointer;padding:22px 40px 22px 0;font-weight:600;font-size:18px;position:relative}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"";position:absolute;right:6px;top:50%;width:12px;height:12px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateY(-70%) rotate(45deg);transition:transform .25s}
-details[open] summary::after{transform:translateY(-30%) rotate(-135deg)}
-details p{margin:0 0 22px;color:var(--ink-soft);max-width:40em}
-
-/* contact */
-.contact{background:var(--teal);color:#fff;border-radius:36px;padding:64px;display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center}
-.contact h2{color:#fff}
-.contact p{color:#CDE6E3;margin:0;font-size:18px;max-width:28em}
-.contact .btns{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
-.contact .btn-primary{background:#fff;color:var(--teal-deep)}
-.contact .btn-primary:hover{background:var(--slot);color:var(--ink)}
-.contact .btn-ghost{color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)}
-.contact .btn-ghost:hover{box-shadow:inset 0 0 0 1.5px #fff}
-@media (max-width:820px){.contact{grid-template-columns:1fr;padding:36px 24px;border-radius:28px}}
-
-footer{padding:48px 0 40px;font-size:14px;color:var(--ink-soft);display:flex;flex-wrap:wrap;gap:16px 32px;justify-content:space-between}
-
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .msg,.admin{transition:none}
-  .typing i{animation:none}
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css?v=202611200009">
 </head>
 <body>
-
-<div class="wrap">
-  <header class="top">
-    <a class="logo" href="#" aria-label="AI Admin, на главную"><span class="logo-mark"><i></i></span>AI Admin</a>
-    <nav aria-label="Разделы">
-      <a class="hide-m" href="#how">Как работает</a>
-      <a class="hide-m" href="#price">Цена</a>
-      <a class="btn btn-primary btn-sm" href="#contact">Записаться на демо</a>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="index.html" aria-label="Qabyla, на главную"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#1F3AB0"/><rect x="8" y="9" width="16" height="2.4" rx="1.2" fill="#fff"/><rect x="8" y="14.8" width="16" height="2.4" rx="1.2" fill="#FFE45C"/><rect x="8" y="20.6" width="10" height="2.4" rx="1.2" fill="#fff"/></svg>Qabyla</a>
+    <nav class="menu" aria-label="Главное меню">
+      <div class="dd"><button type="button" aria-expanded="false">Для кого</button><div class="dd-panel"><a href="barbershop.html"><b>Барбершопы</b><small>Запись к нужному мастеру или к любому свободному</small></a><a href="nails.html"><b>Маникюр и педикюр</b><small>Длинные процедуры без накладок по времени</small></a><a href="cosmetology.html"><b>Косметология</b><small>Перед уколами сначала консультация</small></a><a href="dental.html"><b>Стоматологии</b><small>Острая боль попадает в ближайшее окно</small></a><a href="medcenter.html"><b>Медицинские центры</b><small>Подскажет, к какому врачу идти</small></a><a href="custom.html"><b>Другой бизнес</b><small>Груминг, массаж, автомойка и другие</small></a></div></div>
+      <a href="how.html">Как работает</a><a href="pricing.html">Тарифы</a><a href="demo.html">Демо</a><a href="contact.html">Контакты</a>
+      <a class="btn btn-pen m-cta" href="contact.html">Попробовать бесплатно</a>
     </nav>
-  </header>
-
-  <main>
-  <div class="hero">
+    <a class="btn btn-pen btn-sm head-cta" href="contact.html">Попробовать бесплатно</a>
+    <button class="burger" type="button" aria-expanded="false">Меню</button>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <div class="wrap hero-grid">
     <div>
-      <h1>Пациент пишет ночью. <span>Утром у вас готовая запись.</span></h1>
-      <p class="lead">AI Admin сам ведёт запись в WhatsApp клиники на казахском и русском: предлагает свободное время из расписания, записывает, переносит, отменяет и напоминает о приёме. Администратор просто видит новые записи в Telegram.</p>
-      <div class="hero-ctas">
-        <a class="btn btn-primary" href="#contact">Записаться на демо</a>
-        <a class="btn btn-ghost" href="#how">Как это работает</a>
-      </div>
-      <p class="hero-note">Для стоматологий и частных клиник Казахстана.</p>
+      <h1>Клиенты пишут ночью. Утром они уже записаны.</h1>
+      <p class="lead">Qabyla отвечает вашим клиентам в WhatsApp и Telegram вместо администратора. Понимает русский и казахский, записывает к нужному мастеру, переносит визиты и напоминает о них.</p>
+      <div class="actions"><a class="btn btn-pen" href="contact.html">Попробовать 14 дней бесплатно</a><a class="link" href="demo.html">Написать демо-боту</a></div>
+      <p class="hero-note">14 дней бесплатно на любом тарифе. Настроим за один день.</p>
+      <div class="niche-switch" data-for="hero-desk" role="tablist" aria-label="Пример переписки"><span>Пример:</span><button type="button" data-scene="barber" aria-selected="true">Барбершоп</button><button type="button" data-scene="nails" aria-selected="false">Маникюр</button><button type="button" data-scene="cosmo" aria-selected="false">Косметология</button><button type="button" data-scene="dental" aria-selected="false">Стоматология</button><button type="button" data-scene="med" aria-selected="false">Медцентр</button></div>
     </div>
-
-    <div class="stage" aria-label="Пример переписки пациента с AI Admin">
-      <div class="lang" role="group" aria-label="Язык примера">
-        <button type="button" data-lang="kk" aria-pressed="true">Қазақша</button>
-        <button type="button" data-lang="ru" aria-pressed="false">Русский</button>
-      </div>
-      <div class="phone">
-        <div class="screen">
-          <div class="bar">
-            <div class="ava">DS</div>
-            <div><b>Dental Smile</b><small id="status">онлайн</small></div>
-            <div class="clock" id="clock">23:47</div>
-          </div>
-          <div class="chat" id="chat" aria-live="polite">
-            <div class="typing" id="typing"><i></i><i></i><i></i></div>
-          </div>
-        </div>
-      </div>
-      <div class="admin" id="admin" aria-hidden="true">
-        <header><span class="tg"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M21.5 4.2 2.9 11.4c-1.3.5-1.3 1.2-.2 1.6l4.8 1.5 1.8 5.6c.2.6.1.9.8.9.5 0 .7-.2 1-.5l2.3-2.3 4.9 3.6c.9.5 1.5.2 1.8-.8l3.2-15.2c.3-1.3-.5-1.9-1.8-1.4Z"/></svg></span>Новая запись №128<small>23:48</small></header>
-        <span class="urgent">Срочно: острая боль</span>
-        <dl>
-          <dt>Пациент</dt><dd id="a-name">Айдана</dd>
-          <dt>Врач</dt><dd>Терапевт</dd>
-          <dt>Когда</dt><dd>Завтра, 11:30</dd>
-        </dl>
-        <p class="booked" id="booked">✓ Бот уже записал пациента</p>
-        <div class="acts">
-          <button type="button" tabindex="-1">Отменить</button>
-          <button type="button" tabindex="-1">Перезвоню сам</button>
-        </div>
-      </div>
+    <div>
+  <div class="lang-switch" data-lang-for="hero-desk" role="group" aria-label="Язык переписки">
+    <button type="button" data-lang="ru" aria-pressed="true">Русский</button><button type="button" data-lang="kk" aria-pressed="false">Қазақша</button>
+  </div>
+  <div class="desk" id="hero-desk" data-scene="barber">
+    <div class="journal" aria-label="Журнал записи на завтра">
+      <div class="j-head"><b>Пятница</b><small>на завтра</small></div>
+      <div class="j-grid"></div>
+    </div>
+    <div class="chat" aria-label="Переписка клиента с ИИ-администратором">
+      <div class="chat-bar"><i class="p-ava">BD</i><div><b class="p-name">Barber Demo</b><small>ИИ-администратор</small></div><time>23:47</time></div>
+      <div class="msgs" aria-live="polite"></div>
     </div>
   </div>
-  </main>
+  <button class="replay" type="button" data-replay="hero-desk">Показать ещё раз</button>
 </div>
-
-<section class="night" id="how">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2>От сообщения до приёма без администратора</h2>
-      <p>Никто не сидит в WhatsApp до полуночи. Бот ведёт запись сам, а сотрудники видят, кто и когда придёт.</p>
-    </div>
-    <ol class="timeline">
-      <li>
-        <time>23:47</time>
-        <h3>Пациент пишет в WhatsApp клиники</h3>
-        <p>На ваш обычный номер. Бот отвечает на том языке, на котором написал пациент.</p>
-      </li>
-      <li>
-        <time>23:48</time>
-        <h3>AI Admin записывает</h3>
-        <p>Предлагает свободное время из расписания, спрашивает имя и сразу записывает. Клиника получает уведомление в Telegram.</p>
-      </li>
-      <li>
-        <time>09:30</time>
-        <h3>Бот напоминает о приёме</h3>
-        <p>За сутки или за пару часов до визита. Если планы изменились, бот сам перенесёт или отменит запись.</p>
-      </li>
-    </ol>
   </div>
 </section>
 
-<section id="features">
+<section style="padding-top:20px">
   <div class="wrap">
-    <div class="sec-head">
-      <h2>Что умеет AI Admin</h2>
-      <p>Всё, что нужно, чтобы пациент записался, а не ушёл в клинику, которая ответила первой.</p>
-    </div>
-    <div class="rows">
-      <div class="row"><h3>Казахский и русский</h3><p>Пишет грамотно на обоих языках и отвечает на том, на котором обратился пациент.</p></div>
-      <div class="row"><h3>Только свободное время</h3><p>Не придумывает окна. Берёт их из расписания клиники и учитывает, какой врач нужен для услуги.</p></div>
-      <div class="row"><h3>Перенос и отмена</h3><p>Пациент пишет «не смогу прийти» — бот сам предлагает другое время или отменяет запись, и окно освобождается для других.</p></div>
-      <div class="row"><h3>Напоминания</h3><p>За сутки или за 2 часа до приёма. Меньше неявок, и никого не нужно обзванивать.</p></div>
-      <div class="row"><h3>Срочные случаи</h3><p>Боль, отёк, кровотечение — бот ищет ближайшее время и помечает запись «Срочно». Если описанное похоже на угрозу жизни, советует звонить 103 и зовёт сотрудника.</p></div>
-      <div class="row"><h3>Ответы на вопросы</h3><p>Цены, услуги, адрес, график работы — из данных вашей клиники. Сложный вопрос бот передаёт человеку.</p></div>
-      <div class="row"><h3>Официальный WhatsApp</h3><p>Подключение через WhatsApp Business Platform от Meta, без серых сервисов, из-за которых блокируют номера.</p></div>
-    </div>
+    <div class="sec-head"><h2>Что он делает за администратора</h2>
+      <p class="lead">Ведёт переписку от первого сообщения до записи в журнале. Вас зовёт, только когда без человека не обойтись.</p></div>
+    <div class="ledger"><div><h3>Отвечает сразу</h3><p>Ночью, в выходные, когда все мастера заняты. Клиент не ждёт и не уходит к соседям.</p></div><div><h3>Записывает</h3><p>Смотрит свободные окна каждого мастера и предлагает два-три варианта. Двойных записей не бывает.</p></div><div><h3>Переносит и отменяет</h3><p>Клиент пишет «не успеваю», бот сам находит новое время. Освободившееся окно сразу видят другие.</p></div><div><h3>Напоминает</h3><p>За день до визита и за два часа. Пустых окон становится меньше.</p></div><div><h3>Говорит на языке клиента</h3><p>Пишут по-казахски, отвечает по-казахски. Пишут по-русски, отвечает по-русски.</p></div><div><h3>Знает ваш прайс</h3><p>Отвечает о ценах, адресе и графике только по вашим данным. Чего не знает, не придумывает.</p></div><div><h3>Проверяет чеки</h3><p>Если вы берёте оплату заранее, проверит присланный чек: сумму, получателя и дату.</p></div></div>
   </div>
 </section>
 
-<section id="price" style="padding-top:0">
-  <div class="wrap price">
-    <div class="sec-head" style="margin-bottom:0">
-      <h2>Цена для первых клиник</h2>
-      <p>Первые клиники получают фиксированную цену на старте. Сначала две недели работы на вашем номере, потом решение.</p>
-    </div>
-    <div class="tag">
-      <div class="sum">30 000 ₸</div>
-      <p class="per">в месяц за клинику</p>
-      <ul>
-        <li>14 дней бесплатно на вашем WhatsApp</li>
-        <li>Настройка под ваших врачей, услуги и прайс</li>
-        <li>Уведомления о записях в Telegram</li>
-        <li>Напоминания пациентам о приёме</li>
-        <li>Правки текстов и расписания по запросу</li>
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><h2>Для кого</h2><p class="lead">Для любого бизнеса, где клиенты записываются на время. Для каждой ниши свои правила и свои слова.</p></div>
+    <div class="toc"><a href="barbershop.html"><h3>Барбершопы</h3><p>Запись к нужному мастеру или к любому свободному.</p><span class="go">Подробнее</span></a><a href="nails.html"><h3>Маникюр и педикюр</h3><p>Длинные процедуры без накладок по времени.</p><span class="go">Подробнее</span></a><a href="cosmetology.html"><h3>Косметология</h3><p>Перед уколами сначала консультация.</p><span class="go">Подробнее</span></a><a href="dental.html"><h3>Стоматологии</h3><p>Острая боль попадает в ближайшее окно.</p><span class="go">Подробнее</span></a><a href="medcenter.html"><h3>Медицинские центры</h3><p>Подскажет, к какому врачу идти.</p><span class="go">Подробнее</span></a><a href="custom.html"><h3>Другой бизнес</h3><p>Груминг, массаж, автомойка, репетитор. Опишите свой, соберём за день.</p><span class="go">Описать бизнес</span></a></div>
+  </div>
+</section>
+
+<section class="ink">
+  <div class="wrap split">
+    <div>
+      <h2>Вам остаётся смотреть в телефон</h2>
+      <p class="lead" style="margin-top:20px">Новые записи и вопросы, где нужен человек, приходят вам в отдельный Telegram-бот. Под каждым сообщением кнопки: отменить запись, сказать клиенту, что перезвоните, или ответить ему от своего имени.</p>
+      <ul class="cmds">
+        <li><code>Написать клиенту</code><span>Ваш ответ уходит клиенту, а бот учитывает его в дальнейшей переписке.</span></li>
+        <li><code>/today</code><span>Все записи на сегодня по всем вашим точкам.</span></li>
+        <li><code>Перезвоню сам</code><span>Клиент получает сообщение, что вы ему позвоните.</span></li>
       </ul>
-      <a class="btn btn-primary" href="#contact">Записаться на демо</a>
-      <p class="fine">Сообщения WhatsApp тарифицирует Meta: счёт приходит клинике напрямую по официальным тарифам.</p>
+    </div>
+    <div class="tg" aria-label="Пример сообщений в боте администратора">
+      <div class="tg-card"><div class="biz">Barber Demo</div>Новая запись #128<br>Ерасыл Нурланов<br>Стрижка и борода, мастер Арман<br>Пятница, 19:00</div>
+      <div class="tg-btns"><span>Отменить запись</span><span>Перезвоню сам</span><span class="full">Написать клиенту</span></div>
+      <div class="tg-card"><div class="biz">MedCenter Demo</div>Нужен администратор<br>Спрашивает, принимаете ли по ОСМС</div>
+      <div class="tg-btns"><span class="full">Написать клиенту</span></div>
     </div>
   </div>
 </section>
 
-<section id="faq" style="padding-top:0">
+<section>
   <div class="wrap">
-    <div class="sec-head"><h2>Частые вопросы</h2></div>
-    <div class="faq">
-      <details><summary>Нужно ли менять номер клиники?</summary><p>Нет. Подключаем ваш номер к официальному WhatsApp Business Platform. Если номер сейчас в приложении WhatsApp Business, перед подключением расскажем, что изменится.</p></details>
-      <details><summary>Нужен ли администратор вообще?</summary><p>Для записи, переноса, отмены и вопросов о ценах и адресе — нет. Сотрудника бот зовёт только при жалобе, опасном состоянии или вопросе, ответа на который нет в данных клиники.</p></details>
-      <details><summary>Не будет накладок с записью по телефону?</summary><p>При подключении настраиваем общее расписание с вашей программой записи или таблицей, чтобы бот видел те же занятые часы, что и сотрудники. Каждую новую запись клиника сразу видит в Telegram и может отменить её одной кнопкой.</p></details>
-      <details><summary>Где хранятся данные пациентов?</summary><p>Для работающих клиник данные размещаются на сервере в Казахстане. Подробности в <a href="privacy.html">политике конфиденциальности</a>.</p></details>
-      <details><summary>Сколько времени занимает подключение?</summary><p>Настройка под вашу клинику занимает несколько дней: собираем врачей, услуги и расписание, подключаем WhatsApp и Telegram администратора.</p></details>
-    </div>
+    <div class="sec-head"><h2>Как начать</h2><p class="lead">От заявки до работающего бота проходит один день. Технически ничего делать не нужно.</p></div>
+    <ol class="steps">
+  <li><b>Пишете нам</b><p>В WhatsApp или Telegram. Отвечаем в течение часа.</p></li>
+  <li><b>Присылаете прайс</b><p>Фото прайса, список мастеров и график. Всё вносим сами.</p></li>
+  <li><b>Бот работает 14 дней</b><p>Бесплатно, с вашими настоящими клиентами. Каждую запись вы видите в Telegram.</p></li>
+  <li><b>Выбираете тариф</b><p>Если всё нравится, продолжаете на удобном тарифе.</p></li>
+</ol>
   </div>
 </section>
 
-<section id="contact" style="padding-top:0">
+<section style="padding-top:0">
   <div class="wrap">
-    <div class="contact">
-      <div>
-        <h2>Посмотрите на бота вашей клиники</h2>
-        <p>Покажем демо за 15 минут: напишете боту как пациент на казахском или русском и увидите, как запись появляется у клиники.</p>
-      </div>
-      <div class="btns">
-        <a class="btn btn-primary" id="c-wa" href="#" data-contact="wa">Написать в WhatsApp</a>
-        <a class="btn btn-ghost" id="c-tg" href="#" data-contact="tg">Написать в Telegram</a>
-      </div>
-    </div>
+    <div class="sec-head"><h2>Тарифы</h2><p class="lead">14 дней бесплатно на любом тарифе.</p></div>
+    <div class="plans"><article class="plan"><h3>Старт</h3><p class="for">Для мастера или небольшого салона.</p>
+  <div class="price">19 900 ₸<small> в месяц</small></div><p class="free"><b>14 дней бесплатно</b></p>
+  <ul><li>До 3 мастеров</li><li>WhatsApp или Telegram</li><li>Запись, перенос и отмена круглосуточно</li><li>Напоминания за день и за 2 часа</li><li>Ответы о ценах, адресе и графике</li><li>Русский и казахский</li><li>Записи приходят вам в Telegram</li><li>До 300 диалогов в месяц</li></ul><a class="btn btn-plain" href="contact.html?plan=Старт">Начать с «Старт»</a></article><article class="plan best"><span class="tag">Чаще выбирают</span><h3>Бизнес</h3><p class="for">Для салона с командой мастеров.</p>
+  <div class="price">34 900 ₸<small> в месяц</small></div><p class="free"><b>14 дней бесплатно</b></p>
+  <ul><li>До 10 мастеров</li><li>WhatsApp и Telegram</li><li>Всё, что есть в «Старт»</li><li>Ответ клиенту от вашего имени прямо из Telegram</li><li>Записи на сегодня одной командой</li><li>Проверка чеков, если клиенты платят заранее</li><li>До 1 000 диалогов в месяц</li></ul><a class="btn btn-pen" href="contact.html?plan=Бизнес">Начать с «Бизнес»</a></article><article class="plan"><h3>Премиум</h3><p class="for">Для клиник, медцентров и сетей.</p>
+  <div class="price">59 900 ₸<small> в месяц</small></div><p class="free"><b>14 дней бесплатно</b></p>
+  <ul><li>Мастеров и врачей без ограничения</li><li>Несколько филиалов в одном Telegram</li><li>Всё, что есть в «Бизнес»</li><li>Настройка под ваши правила записи</li><li>Обучение администраторов</li><li>Поддержка в первую очередь</li><li>До 3 000 диалогов в месяц</li></ul><a class="btn btn-plain" href="contact.html?plan=Премиум">Начать с «Премиум»</a></article></div>
+    <p class="note">Диалог: переписка с одним клиентом за день. Сообщения WhatsApp оплачиваются Meta отдельно, по её ценам. <a class="link" href="pricing.html">Сравнить тарифы подробно</a></p>
   </div>
 </section>
 
-<div class="wrap">
-  <footer>
-    <span>© 2026 AI Admin. Казахстан.</span>
-    <a href="privacy.html">Политика конфиденциальности</a>
-  </footer>
-</div>
-
-<script>
-// Контакты: впиши свои — пустые кнопки скрываются.
-const CONTACT = { wa: "77472373165", tg: "dekoo_n" };
-for (const a of document.querySelectorAll("[data-contact]")) {
-  const v = CONTACT[a.dataset.contact];
-  if (!v) { a.hidden = true; continue; }
-  a.href = a.dataset.contact === "wa" ? `https://wa.me/${v}` : `https://t.me/${v}`;
-  a.target = "_blank"; a.rel = "noopener";
-}
-
-const SCRIPTS = {
-  kk: {
-    status: "онлайн", name: "Айдана",
-    msgs: [
-      ["in", "Сәлеметсіз бе! Тісім түні бойы ауырды. Ертеңге жазыла аламын ба?", "23:47"],
-      ["out", "Сәлеметсіз бе! Мен Dental Smile клиникасының виртуалды көмекшісімін. Ертең терапевтте бос уақыт бар. Қайсысы ыңғайлы?", "23:47", ["11:30", "14:00", "16:30"]],
-      ["in", "11:30 болсын", "23:47"],
-      ["out", "Жақсы. Атыңызды жазыңызшы.", "23:48"],
-      ["in", "Айдана", "23:48"],
-      ["out", "✅ Айдана, сіз жазылдыңыз: ертең, 11:30, терапевт. Мекенжай: Абай даңғылы, 10.", "23:48"],
-      ["card"],
-      ["out", "🔔 Еске салу: бүгін 11:30-да сізді терапевт күтеді.", "09:30"],
-    ],
-  },
-  ru: {
-    status: "онлайн", name: "Айдана",
-    msgs: [
-      ["in", "Здравствуйте! Всю ночь болит зуб. Можно записаться на завтра?", "23:47"],
-      ["out", "Здравствуйте! Я виртуальный помощник клиники Dental Smile. Завтра у терапевта есть свободное время. Как вам удобнее?", "23:47", ["11:30", "14:00", "16:30"]],
-      ["in", "Давайте в 11:30", "23:47"],
-      ["out", "Хорошо. Напишите, пожалуйста, ваше имя.", "23:48"],
-      ["in", "Айдана", "23:48"],
-      ["out", "✅ Айдана, вы записаны: завтра, 11:30, терапевт. Адрес: пр. Абая, 10.", "23:48"],
-      ["card"],
-      ["out", "🔔 Напоминаем: сегодня в 11:30 вас ждёт терапевт.", "09:30"],
-    ],
-  },
-};
-
-const chat = document.getElementById("chat"), typing = document.getElementById("typing");
-const admin = document.getElementById("admin");
-const clock = document.getElementById("clock");
-const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-let run = 0;
-const wait = (ms, id) => new Promise((res, rej) => setTimeout(() => id === run ? res() : rej(), reduce ? 0 : ms));
-
-function bubble([side, text, time, slots]) {
-  const m = document.createElement("div");
-  m.className = `msg ${side}`;
-  m.textContent = text;
-  if (slots) {
-    const s = document.createElement("div"); s.className = "slots";
-    slots.forEach(t => { const b = document.createElement("span"); b.textContent = t; s.append(b); });
-    m.append(s);
-  }
-  const t = document.createElement("time"); t.textContent = time; m.append(t);
-  chat.insertBefore(m, typing);
-  void m.offsetWidth; // зафиксировать начальное состояние, чтобы сработала анимация
-  m.classList.add("on");
-  return m;
-}
-
-async function play(lang) {
-  const id = ++run, sc = SCRIPTS[lang];
-  chat.querySelectorAll(".msg").forEach(n => n.remove());
-  admin.classList.remove("on"); chat.classList.remove("lift");
-  clock.textContent = "23:47";
-  try {
-    await wait(500, id);
-    let slotMsg;
-    for (const step of sc.msgs) {
-      if (step[0] === "card") {  // клиника видит новую запись — нажимать ничего не нужно
-        chat.classList.add("lift"); admin.classList.add("on"); await wait(2600, id);
-        continue;
-      }
-      if (step[2] === "09:30") { admin.classList.remove("on"); chat.classList.remove("lift"); await wait(700, id); }  // утро
-      if (step[0] === "out") { typing.classList.add("on"); await wait(1100, id); typing.classList.remove("on"); }
-      else await wait(900, id);
-      const m = bubble(step);
-      if (step[3]) slotMsg = m;
-      if (step[0] === "in" && slotMsg) slotMsg.querySelectorAll(".slots span")
-        .forEach(s => { if (step[1].includes(s.textContent)) s.classList.add("pick"); });
-      clock.textContent = step[2];
-      await wait(step[0] === "in" ? 600 : 900, id);
-    }
-    await wait(6000, id);
-    play(lang);
-  } catch (_) { /* перезапуск другим языком */ }
-}
-
-document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
-  document.querySelectorAll(".lang button").forEach(x => x.setAttribute("aria-pressed", x === b));
-  play(b.dataset.lang);
-}));
-play("kk");
-</script>
+<section><div class="wrap"><h2 style="margin-bottom:32px">Вопросы</h2><div class="faq"><details><summary>Клиенты поймут, что отвечает бот?</summary><p>Он честно говорит, что он виртуальный помощник. Но пишет коротко и по делу, как ваш администратор, без меню с кнопками.</p></details><details><summary>Что если бот ответит неправильно?</summary><p>Он отвечает только тем, что есть в ваших настройках: прайс, мастера, график, частые вопросы. Чего не знает, передаёт вам. Все переписки видно, правила можно поправить в любой день.</p></details><details><summary>Нужно менять номер WhatsApp?</summary><p>Скорее всего, нет. Подключаем через официальный WhatsApp Business Platform. Meta позволяет боту и администратору работать в одном номере, доступность для вашего номера проверяем при подключении.</p></details><details><summary>Можно принимать оплату через бота?</summary><p>Бот умеет проверять чеки об оплате, которые присылают клиенты: сумму, получателя и дату. Выставление счетов Kaspi прямо в чате сейчас в разработке.</p></details><details><summary>Что будет после 14 дней?</summary><p>Выбираете тариф и платите раз в месяц.</p></details></div></div></section>
+<section style="padding-bottom:0"><div class="wrap"><div class="final">
+  <div><h2>Попробуйте на своих клиентах</h2><p class="lead" style="margin-top:14px">14 дней бесплатно. Настроим за один день.</p></div>
+  <div class="actions"><a class="btn btn-pen" href="contact.html">Оставить заявку</a><a class="link" href="demo.html">Сначала посмотреть демо</a></div>
+</div></div></section>
+</main>
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div><a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#1F3AB0"/><rect x="8" y="9" width="16" height="2.4" rx="1.2" fill="#fff"/><rect x="8" y="14.8" width="16" height="2.4" rx="1.2" fill="#FFE45C"/><rect x="8" y="20.6" width="10" height="2.4" rx="1.2" fill="#fff"/></svg>Qabyla</a>
+        <p style="margin-top:14px;max-width:22em">ИИ-администратор для бизнеса с записью. Казахстан.</p></div>
+      <div><h4>Для кого</h4><ul><li><a href="barbershop.html">Барбершопы</a></li><li><a href="nails.html">Маникюр и педикюр</a></li><li><a href="cosmetology.html">Косметология</a></li><li><a href="dental.html">Стоматологии</a></li><li><a href="medcenter.html">Медицинские центры</a></li><li><a href="custom.html">Другой бизнес</a></li></ul></div>
+      <div><h4>Qabyla</h4><ul><li><a href="how.html">Как работает</a></li><li><a href="pricing.html">Тарифы</a></li>
+        <li><a href="demo.html">Демо-боты</a></li><li><a href="contact.html">Контакты</a></li><li><a href="privacy.html">Конфиденциальность</a></li></ul></div>
+      <div><h4>Связаться</h4><ul><li><a href="https://wa.me/77472373165" target="_blank" rel="noopener">WhatsApp +7 747 237 31 65</a></li>
+        <li><a href="https://t.me/dekoo_n" target="_blank" rel="noopener">Telegram @dekoo_n</a></li></ul></div>
+    </div>
+    <div class="f-bottom">© 2026 Qabyla</div>
+  </div>
+</footer>
+<script src="assets/app.js?v=202611200009"></script>
 </body>
 </html>
